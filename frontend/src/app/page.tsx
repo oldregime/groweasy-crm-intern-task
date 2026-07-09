@@ -104,7 +104,7 @@ export default function AppDashboard() {
   const [importedLeadsResult, setImportedLeadsResult] = useState<Lead[]>([]);
 
   // Backend API URL
-  const API_BASE = 'http://localhost:8000/api';
+  const API_BASE = 'https://lazy-ties-call.loca.lt/api';
 
   // Toggle Theme
   useEffect(() => {
