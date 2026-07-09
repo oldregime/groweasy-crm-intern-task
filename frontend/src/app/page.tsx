@@ -98,12 +98,12 @@ export default function AppDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const res = await fetch(`${API_BASE}/leads?limit=5`);
+      const res = await fetch(`${API_BASE}/leads?limit=5`, { headers: { 'bypass-tunnel-reminder': 'true' } });
       if (res.ok) {
         const data = await res.json();
         setLeads(data.leads);
       }
-      const sessRes = await fetch(`${API_BASE}/leads/sessions`);
+      const sessRes = await fetch(`${API_BASE}/leads/sessions`, { headers: { 'bypass-tunnel-reminder': 'true' } });
       if (sessRes.ok) {
         const sessData = await sessRes.json();
         setSessions(sessData);
@@ -126,7 +126,7 @@ export default function AppDashboard() {
         limit: limit.toString(),
         offset: currentOffset.toString(),
       });
-      const res = await fetch(`${API_BASE}/leads?${query.toString()}`);
+      const res = await fetch(`${API_BASE}/leads?${query.toString()}`, { headers: { 'bypass-tunnel-reminder': 'true' } });
       if (res.ok) {
         const data = await res.json();
         if (reset) {
@@ -151,7 +151,7 @@ export default function AppDashboard() {
   const handleResetDatabase = async () => {
     if (confirm('Are you sure you want to delete all leads in the database? This cannot be undone.')) {
       try {
-        const res = await fetch(`${API_BASE}/leads/reset`, { method: 'DELETE' });
+        const res = await fetch(`${API_BASE}/leads/reset`, { method: 'DELETE', headers: { 'bypass-tunnel-reminder': 'true' } });
         if (res.ok) {
           fetchLeads(true);
           fetchDashboardData();
@@ -207,6 +207,7 @@ export default function AppDashboard() {
 
     const xhr = new XMLHttpRequest();
     xhr.open('POST', `${API_BASE}/import`, true);
+    xhr.setRequestHeader('bypass-tunnel-reminder', 'true');
     if (apiKey) xhr.setRequestHeader('X-Api-Key', apiKey);
     xhr.setRequestHeader('X-Provider', provider);
 
@@ -392,7 +393,7 @@ export default function AppDashboard() {
                                     const url = new URLSearchParams({ sessionId: sess.id });
                                     setActiveTab('leads');
                                     setTimeout(() => {
-                                      fetch(`${API_BASE}/leads?${url.toString()}`).then(res => res.json()).then(data => { setLeads(data.leads); setLeadsCount(data.totalCount); });
+                                      fetch(`${API_BASE}/leads?${url.toString()}`, { headers: { 'bypass-tunnel-reminder': 'true' } }).then(res => res.json()).then(data => { setLeads(data.leads); setLeadsCount(data.totalCount); });
                                     }, 100);
                                   }}
                                 >
