@@ -1,48 +1,58 @@
 # GrowEasy AI-Powered CSV Importer
 
-An intelligent, production-ready CRM Lead Importer that allows users to upload lead sheets in any arbitrary CSV format, previews them instantly, and leverages AI/heuristics to parse, map, and structure the leads into the GrowEasy CRM schema in real-time.
+An intelligent, production-ready CRM Lead Importer that allows users to upload lead sheets in any arbitrary CSV format, previews them instantly, and leverages AI and heuristics to parse, map, and structure the leads into the GrowEasy CRM schema in real-time.
 
-This application replicates the official GrowEasy CRM branding, utilizing a premium dark glassmorphism dashboard design with smooth micro-animations.
-
----
-
-## 🌟 Key Features
-
-*   **Intelligent Column Mapping:** Upload *any* CSV layout (Facebook Lead Export, Google Ads, Real Estate lists, etc.). The system automatically maps messy custom fields (e.g. `Cellular`, `Ph No`, `e-mail address`) to clean CRM parameters.
-*   **Dual Processing Engine:**
-    *   **AI Engine (Gemini/OpenAI):** Employs LLM prompts to extract ambiguous columns and format values.
-    *   **Heuristic Engine (Local Fallback):** Regex-based matcher that works instantly without requiring an API key.
-*   **Real-Time Progress Streaming:** Uses **Server-Sent Events (SSE)** to stream progress batch-by-batch from the backend to the frontend with real-time percentages and statistics.
-*   **Data Quality Validation:**
-    *   Formats dates to ISO-8601 / JS-convertible format.
-    *   Validates and restricts `crm_status` and `data_source` to allowed enums.
-    *   Consolidates multiple emails/numbers, extracting the primary contact and appending extras to notes.
-    *   Skips invalid records (rows lacking both email and phone).
-*   **Performance Optimization:** Includes a custom-built **Virtualized Table** to render 10,000+ lead rows instantly on the client with zero scrolling lag.
+This application replicates the official GrowEasy CRM branding, utilizing a premium dark glassmorphism dashboard design with a custom-built, ultra-fast virtualized table.
 
 ---
 
-## 💎 Bonus Points Implemented
+## Author & Contact
 
-- [x] **Drag & Drop Upload:** Beautiful file upload zone matching the GrowEasy CRM modal design.
-- [x] **Progress Indicators:** Animated real-time radial progress counters and progress bars.
-- [x] **Streaming/Incremental Parsing:** Implemented via **Server-Sent Events (SSE)**.
-- [x] **Self-Healing AI Retries:** Automatic catch-and-retry mechanism for failed LLM API batches.
-- [x] **Table Virtualization:** Render massive datasets in a custom high-performance virtualized viewport.
-- [x] **Dark/Light Mode:** Full global theme toggle conforming to premium UI aesthetics.
-- [x] **Unit & Integration Tests:** Double-layered testing suite using `vitest` and `supertest`.
-- [x] **Docker Setup:** Fully containerized setup via `docker-compose.yml`.
-- [x] **Online Deployment:** Production-ready configuration for Vercel (Frontend) and Render/Railway (Backend).
+**Divyansh Joshi**
+- Email: divyanshjoshidev@gmail.com
+- Phone: +91 8962430535
 
 ---
 
-## 📁 Repository Structure
+## Live Deployment
+
+- Frontend (Vercel): https://frontend-gamma-black-32.vercel.app
+
+---
+
+## Key Features
+
+* **Intelligent Column Mapping:** Upload any CSV layout (Facebook Lead Export, Google Ads, Real Estate lists, etc.). The system automatically maps messy custom fields to clean CRM parameters.
+* **Dual Processing Engine:**
+  * AI Engine (Gemini API): Employs LLM prompts to extract ambiguous columns and format values in highly optimized parallel batches.
+  * Heuristic Engine (Local Fallback): Regex-based matcher that works instantly without requiring an API key.
+* **Real-Time Progress Streaming:** Uses Server-Sent Events (SSE) to stream progress batch-by-batch from the backend to the frontend with real-time percentages and statistics.
+* **Data Quality Validation & Deduplication:** Formats dates to ISO-8601, validates allowed enums, skips invalid records, and automatically prevents duplicate email/phone numbers from being imported.
+* **Performance Optimization:** Includes a custom-built Virtualized Table to render 10,000+ lead rows instantly on the client with zero scrolling lag, combined with server-side Search Debouncing.
+
+---
+
+## Bonus Points Implemented
+
+- Drag & Drop Upload: Professional file upload zone matching the GrowEasy CRM modal design.
+- Progress Indicators: Animated real-time radial progress counters and progress bars.
+- Streaming/Incremental Parsing: Implemented via Server-Sent Events (SSE).
+- Self-Healing AI Retries: Automatic catch-and-retry mechanism for failed LLM API batches.
+- Table Virtualization: Render massive datasets in a custom high-performance virtualized viewport.
+- Inline Status Editing: Fully interactive dropdowns inside the table to instantly PATCH/PUT data to the database without page refreshes.
+- Dark/Light Mode: Full global theme toggle conforming to premium UI aesthetics.
+- Unit & Integration Tests: Double-layered testing suite using vitest and supertest.
+- Docker Setup: Fully containerized setup via docker-compose.yml.
+
+---
+
+## Repository Structure
 
 ```text
 ├── backend/
 │   ├── prisma/             # SQLite DB schemas and configurations
 │   ├── src/
-│   │   ├── routes/         # API routes (import streaming, lead querying)
+│   │   ├── routes/         # API routes (import streaming, lead querying, inline editing)
 │   │   ├── services/       # AI mapping engines (Gemini & Heuristic Matchers)
 │   │   ├── app.ts          # Main Express application setup
 │   │   └── db.ts           # Prisma Client instantiation
@@ -60,16 +70,16 @@ This application replicates the official GrowEasy CRM branding, utilizing a prem
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
-### 📋 Prerequisites
-*   Node.js v20+ / Node.js v22+
-*   npm
+### Prerequisites
+* Node.js v20+ / Node.js v22+
+* npm
 
-### 🛠️ Local Installation
+### Local Installation
 
-1.  **Clone the Repository** and navigate to the project directory.
-2.  **Setup Backend:**
+1. Clone the Repository and navigate to the project directory.
+2. Setup Backend:
     ```bash
     cd backend
     npm install
@@ -77,7 +87,7 @@ This application replicates the official GrowEasy CRM branding, utilizing a prem
     Create a `.env` file in the `backend/` folder:
     ```env
     PORT=8000
-    DATABASE_URL="file:/home/dj/groweasy_crm.db" # Or path to your local SQLite file
+    DATABASE_URL="file:./dev.db"
     GEMINI_API_KEY=YOUR_GEMINI_API_KEY # (Optional, fallback heuristic engine runs automatically if omitted)
     ```
     Sync the database and generate Prisma Client:
@@ -90,17 +100,16 @@ This application replicates the official GrowEasy CRM branding, utilizing a prem
     ```
     The backend will run at `http://localhost:8000`.
 
-3.  **Setup Frontend:**
+3. Setup Frontend:
     ```bash
     cd ../frontend
     npm install
-    npm run dev
     ```
     The frontend will run at `http://localhost:3000`.
 
 ---
 
-## 🐳 Running with Docker
+## Running with Docker
 
 You can spin up the entire frontend, backend, and database with a single command:
 
@@ -112,7 +121,7 @@ Access the dashboard at `http://localhost:3000`. Database records are persisted 
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
 A complete testing suite is provided in the backend to validate mapping correctness and endpoint integrity.
 
@@ -121,24 +130,8 @@ cd backend
 npm run test
 ```
 
-Tests run in **Vitest** and verify:
-*   Fuzzy mappings and allowed value restrictions.
-*   Formatting logic and multi-contact note consolidation.
-*   Invalid row skipping.
-*   API response statuses and search filters.
-
----
-
-## 🌐 Deployment Guide (Free Hosting)
-
-### Backend (Render / Railway)
-1.  Create a web service on **Render** linked to your backend folder.
-2.  Select the **Node** runtime.
-3.  Add environmental variables:
-    *   `PORT=8000`
-    *   `DATABASE_URL=file:/data/groweasy_crm.db` (Configure a persistent volume at mount path `/data` to persist your SQLite database!)
-4.  Alternatively, connect a free **Neon PostgreSQL** database and change the Prisma provider to `postgresql`.
-
-### Frontend (Vercel)
-1.  Import your Next.js frontend folder into **Vercel**.
-2.  Deploy with default Next.js configurations.
+Tests run in Vitest and verify:
+* Fuzzy mappings and allowed value restrictions.
+* Formatting logic and multi-contact note consolidation.
+* Invalid row skipping.
+* API response statuses and search filters.
