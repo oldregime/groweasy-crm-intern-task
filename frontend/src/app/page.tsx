@@ -81,8 +81,8 @@ export default function AppDashboard() {
   const [importResultSessionId, setImportResultSessionId] = useState('');
   const [importedLeadsResult, setImportedLeadsResult] = useState<Lead[]>([]);
 
-  // Backend API URL
-  const API_BASE = 'https://proud-cheetah-3.loca.lt/api';
+  // Backend API URL (Proxied via Next.js rewrites to bypass CORS and Localtunnel walls)
+  const API_BASE = '/backend-api';
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -630,20 +630,29 @@ export default function AppDashboard() {
                   <h3 className="text-xl font-bold mb-2">Drag & Drop your CSV file here</h3>
                   <p className="text-base-content/60 mb-6 text-sm">or click to browse from your computer</p>
                   
-                  <input type="file" id="csvUpload" accept=".csv" className="hidden" onChange={handleFileSelect} />
-                  <label htmlFor="csvUpload" className="btn btn-primary px-8 shadow-md">Browse Files</label>
-                  
-                  {selectedFile && (
-                    <div className="mt-8 p-4 bg-success/10 text-success rounded-xl border border-success/20 inline-flex items-center gap-3">
-                      <CheckCircle2 size={20} />
-                      <span className="font-medium">{selectedFile.name}</span>
-                    </div>
-                  )}
+                  <div className="flex flex-col items-center gap-4">
+                    <input type="file" id="csvUpload" accept=".csv" className="hidden" onChange={handleFileSelect} />
+                    <label htmlFor="csvUpload" className="btn btn-primary px-8 shadow-md">Browse Files</label>
+                    
+                    {selectedFile && (
+                      <div className="p-4 bg-success/10 text-success rounded-xl border border-success/20 inline-flex items-center gap-3">
+                        <CheckCircle2 size={20} />
+                        <span className="font-medium">{selectedFile.name}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 
-                <div className="mt-6 flex justify-between items-center">
-                  <button onClick={handleDownloadTemplate} className="btn btn-ghost btn-sm text-primary">Download Sample Template</button>
-                  <button onClick={handleUploadClick} disabled={!selectedFile} className="btn btn-neutral px-8">Next Step <ChevronRight size={16}/></button>
+                <div className="mt-8 flex justify-between items-center bg-base-200/50 p-4 rounded-xl">
+                  <div className="flex flex-col items-start gap-1">
+                    <span className="text-sm font-semibold opacity-70">Need a sample file?</span>
+                    <button onClick={handleDownloadTemplate} className="btn btn-outline btn-sm btn-primary">
+                      Download Sample Template
+                    </button>
+                  </div>
+                  <button onClick={handleUploadClick} disabled={!selectedFile} className="btn btn-neutral px-8 h-12">
+                    Next Step <ChevronRight size={18}/>
+                  </button>
                 </div>
               </div>
             )}
