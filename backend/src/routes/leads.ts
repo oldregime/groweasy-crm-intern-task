@@ -119,6 +119,27 @@ router.get('/sessions', async (req, res) => {
   }
 });
 
+// PUT /api/leads/:id/status - Update a specific lead's status
+router.put('/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    
+    if (!status || !['GOOD_LEAD_FOLLOW_UP', 'DID_NOT_CONNECT', 'BAD_LEAD', 'SALE_DONE'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid CRM status.' });
+    }
+
+    const updatedLead = await prisma.lead.update({
+      where: { id },
+      data: { crm_status: status },
+    });
+    res.json({ message: 'Lead status updated successfully.', lead: updatedLead });
+  } catch (error: any) {
+    console.error('Error updating lead status:', error);
+    res.status(500).json({ error: `Failed to update lead status: ${error.message}` });
+  }
+});
+
 // DELETE /api/leads/:id - Delete a specific lead
 router.delete('/:id', async (req, res) => {
   try {

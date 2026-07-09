@@ -80,26 +80,45 @@ router.post('/', upload.single('file'), async (req: express.Request, res: expres
       const dbLeads = await Promise.all(
         mappedBatch.map(async (lead) => {
           try {
+            let finalLead = { ...lead };
+            
+            // Data De-duplication check
+            if (!finalLead.is_skipped) {
+              const duplicate = await prisma.lead.findFirst({
+                where: {
+                  OR: [
+                    finalLead.email ? { email: finalLead.email } : {},
+                    finalLead.mobile_without_country_code ? { mobile_without_country_code: finalLead.mobile_without_country_code } : {},
+                  ].filter(cond => Object.keys(cond).length > 0)
+                }
+              });
+              
+              if (duplicate) {
+                finalLead.is_skipped = true;
+                finalLead.skip_reason = 'Duplicate lead (email or phone already exists)';
+              }
+            }
+
             const savedLead = await prisma.lead.create({
               data: {
                 import_session_id: importSessionId,
-                created_at: lead.created_at || new Date().toISOString(),
-                name: lead.name || (lead.is_skipped ? '' : 'Unknown Lead'),
-                email: lead.email || null,
-                country_code: lead.country_code || null,
-                mobile_without_country_code: lead.mobile_without_country_code || null,
-                company: lead.company || null,
-                city: lead.city || null,
-                state: lead.state || null,
-                country: lead.country || null,
-                lead_owner: lead.lead_owner || null,
-                crm_status: lead.crm_status || 'GOOD_LEAD_FOLLOW_UP',
-                crm_note: lead.crm_note || null,
-                data_source: lead.data_source || '',
-                possession_time: lead.possession_time || null,
-                description: lead.description || null,
-                is_skipped: lead.is_skipped,
-                skip_reason: lead.skip_reason || null,
+                created_at: finalLead.created_at || new Date().toISOString(),
+                name: finalLead.name || (finalLead.is_skipped ? '' : 'Unknown Lead'),
+                email: finalLead.email || null,
+                country_code: finalLead.country_code || null,
+                mobile_without_country_code: finalLead.mobile_without_country_code || null,
+                company: finalLead.company || null,
+                city: finalLead.city || null,
+                state: finalLead.state || null,
+                country: finalLead.country || null,
+                lead_owner: finalLead.lead_owner || null,
+                crm_status: finalLead.crm_status || 'GOOD_LEAD_FOLLOW_UP',
+                crm_note: finalLead.crm_note || null,
+                data_source: finalLead.data_source || '',
+                possession_time: finalLead.possession_time || null,
+                description: finalLead.description || null,
+                is_skipped: finalLead.is_skipped,
+                skip_reason: finalLead.skip_reason || null,
               },
             });
             

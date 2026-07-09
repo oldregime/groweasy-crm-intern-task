@@ -89,11 +89,14 @@ export default function AppDashboard() {
   }, [theme]);
 
   useEffect(() => {
-    if (activeTab === 'leads') {
-      fetchLeads(true);
-    } else if (activeTab === 'dashboard') {
-      fetchDashboardData();
-    }
+    const timer = setTimeout(() => {
+      if (activeTab === 'leads') {
+        fetchLeads(true);
+      } else if (activeTab === 'dashboard') {
+        fetchDashboardData();
+      }
+    }, 300);
+    return () => clearTimeout(timer);
   }, [activeTab, search, filterStatus, filterSource]);
 
   const fetchDashboardData = async () => {
@@ -173,6 +176,22 @@ export default function AppDashboard() {
       } catch (err) {
         console.error('Failed to delete lead', err);
       }
+    }
+  };
+
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/leads/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        setLeads(leads.map(lead => lead.id === id ? { ...lead, crm_status: newStatus } : lead));
+        fetchDashboardData();
+      }
+    } catch (err) {
+      console.error('Failed to update status', err);
     }
   };
 
@@ -476,6 +495,52 @@ export default function AppDashboard() {
           )}
 
           {/* TAB 3: MANAGE LEADS */}
+          {activeTab === 'generate' && (
+            <div className="flex flex-col gap-6 w-full max-w-6xl mx-auto h-full animate-fade-in pb-12">
+              <div className="bg-base-100 p-8 rounded-xl border border-base-200 shadow-sm text-center">
+                <Zap size={48} className="mx-auto text-primary mb-4" />
+                <h2 className="text-2xl font-bold mb-2">Lead Generation Studio</h2>
+                <p className="text-base-content/70 max-w-lg mx-auto mb-6">Create AI-powered lead magnets and ad campaigns directly from your CRM. Leads captured will automatically flow into your database.</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                  <div className="p-6 border border-base-300 rounded-lg hover:border-primary cursor-pointer transition-colors">
+                    <h3 className="font-semibold text-lg">Facebook Lead Ads</h3>
+                    <p className="text-sm text-base-content/60 mt-1">Connect your Meta account</p>
+                    <button className="btn btn-primary btn-sm mt-4 w-full">Connect</button>
+                  </div>
+                  <div className="p-6 border border-base-300 rounded-lg hover:border-primary cursor-pointer transition-colors">
+                    <h3 className="font-semibold text-lg">Website Form Builder</h3>
+                    <p className="text-sm text-base-content/60 mt-1">Generate an embeddable form</p>
+                    <button className="btn btn-primary btn-sm mt-4 w-full">Create Form</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'engage' && (
+            <div className="flex flex-col gap-6 w-full max-w-6xl mx-auto h-full animate-fade-in pb-12">
+              <div className="bg-base-100 p-8 rounded-xl border border-base-200 shadow-sm text-center">
+                <MessageSquare size={48} className="mx-auto text-info mb-4" />
+                <h2 className="text-2xl font-bold mb-2">Automated Engagement</h2>
+                <p className="text-base-content/70 max-w-lg mx-auto mb-6">Set up email drip campaigns and automated WhatsApp follow-ups for your fresh leads.</p>
+                <div className="bg-base-200 rounded-lg p-4 max-w-2xl mx-auto text-left flex justify-between items-center">
+                  <div>
+                    <h4 className="font-semibold text-base-content">Welcome Series (Real Estate)</h4>
+                    <p className="text-xs text-base-content/60">3 emails over 7 days</p>
+                  </div>
+                  <button className="btn btn-info btn-sm">Edit Sequence</button>
+                </div>
+                <div className="bg-base-200 rounded-lg p-4 max-w-2xl mx-auto text-left flex justify-between items-center mt-3">
+                  <div>
+                    <h4 className="font-semibold text-base-content">WhatsApp Follow-up Bot</h4>
+                    <p className="text-xs text-base-content/60">Triggers immediately on import</p>
+                  </div>
+                  <button className="btn btn-info btn-sm">Configure</button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {activeTab === 'leads' && (
             <div className="max-w-[1400px] mx-auto space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col h-full">
               
@@ -566,13 +631,23 @@ export default function AppDashboard() {
                       { key: 'email', header: 'Email Address', width: '220px' },
                       { key: 'mobile_without_country_code', header: 'Contact', width: '180px', render: (val, row) => <span>{row.country_code ? `${row.country_code} ` : ''}{val || '—'}</span> },
                       { key: 'company', header: 'Company', width: '160px' },
-                      { key: 'crm_status', header: 'Status', width: '180px', render: (val) => {
-                          if (val === 'SALE_DONE') return <div className="badge badge-success gap-1"><CheckCircle2 size={12}/> Sale Done</div>;
-                          if (val === 'GOOD_LEAD_FOLLOW_UP') return <div className="badge badge-info gap-1"><TrendingUp size={12}/> Good Lead</div>;
-                          if (val === 'DID_NOT_CONNECT') return <div className="badge badge-warning gap-1"><Phone size={12}/> Not Connected</div>;
-                          if (val === 'BAD_LEAD') return <div className="badge badge-error gap-1"><AlertTriangle size={12}/> Bad Lead</div>;
-                          return <div className="badge badge-ghost">{val}</div>;
-                        }
+                      { key: 'crm_status', header: 'Status', width: '200px', render: (val, row) => (
+                          <select 
+                            className={`select select-xs w-full max-w-xs ${
+                              val === 'SALE_DONE' ? 'select-success' : 
+                              val === 'GOOD_LEAD_FOLLOW_UP' ? 'select-info' : 
+                              val === 'DID_NOT_CONNECT' ? 'select-warning' : 
+                              val === 'BAD_LEAD' ? 'select-error' : ''
+                            }`}
+                            value={val || ''}
+                            onChange={(e) => handleStatusChange(row.id, e.target.value)}
+                          >
+                            <option value="GOOD_LEAD_FOLLOW_UP">Good Lead</option>
+                            <option value="DID_NOT_CONNECT">Not Connected</option>
+                            <option value="BAD_LEAD">Bad Lead</option>
+                            <option value="SALE_DONE">Sale Done</option>
+                          </select>
+                        )
                       },
                       { key: 'data_source', header: 'Source', width: '160px', render: (val) => <span className="badge badge-neutral font-mono text-[10px]">{val || '—'}</span> },
                       { key: 'crm_note', header: 'Notes', width: '300px', render: (val) => <span className="text-sm truncate block max-w-[280px]" title={val}>{val || '—'}</span> },
@@ -617,8 +692,8 @@ export default function AppDashboard() {
             <li className="menu-title text-base-content/50 font-semibold tracking-wider text-[10px] uppercase mt-2 mb-1">Overview</li>
             <li><a className={activeTab === 'dashboard' ? 'active' : ''} onClick={() => setActiveTab('dashboard')}><LayoutDashboard size={18} /> Dashboard</a></li>
             <li><a className={activeTab === 'leads' ? 'active' : ''} onClick={() => setActiveTab('leads')}><Users size={18} /> Manage Leads</a></li>
-            <li><a className="opacity-50 pointer-events-none"><Zap size={18} /> Generate Leads</a></li>
-            <li><a className="opacity-50 pointer-events-none"><MessageSquare size={18} /> Engage Leads</a></li>
+            <li><a className={activeTab === 'generate' ? 'active font-semibold' : ''} onClick={() => setActiveTab('generate')}><Zap size={18} /> Generate Leads</a></li>
+            <li><a className={activeTab === 'engage' ? 'active font-semibold' : ''} onClick={() => setActiveTab('engage')}><MessageSquare size={18} /> Engage Leads</a></li>
             
             <div className="divider my-2"></div>
             
