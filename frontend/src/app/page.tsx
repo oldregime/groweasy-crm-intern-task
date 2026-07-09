@@ -82,7 +82,7 @@ export default function AppDashboard() {
   const [importedLeadsResult, setImportedLeadsResult] = useState<Lead[]>([]);
 
   // Backend API URL
-  const API_BASE = 'https://lazy-ties-call.loca.lt/api';
+  const API_BASE = 'https://ready-showers-greet.loca.lt/api';
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
