@@ -57,7 +57,7 @@ router.post('/', upload.single('file'), async (req: express.Request, res: expres
       totalRecords 
     });
 
-    const batchSize = 10;
+    const batchSize = 50;
     let processedCount = 0;
     let importedCount = 0;
     let skippedCount = 0;

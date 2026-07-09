@@ -329,9 +329,9 @@ export default function AppDashboard() {
               </div>
             </button>
             <div className="dropdown dropdown-end">
-              <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
-                <div className="bg-primary text-primary-content rounded-full w-10">
-                  <span className="font-semibold text-sm">DJ</span>
+              <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                <div className="w-10 rounded-full border border-base-300">
+                  <img src="/profile.jpeg" alt="Divyansh Joshi" />
                 </div>
               </div>
               <ul tabIndex={0} className="mt-3 z-50 p-2 shadow-2xl menu menu-sm dropdown-content bg-base-100 rounded-box w-52 border border-base-300">
@@ -629,9 +629,9 @@ export default function AppDashboard() {
 
           <div className="p-4 m-4 bg-base-200 rounded-xl border border-base-300">
             <div className="flex items-center gap-3">
-              <div className="avatar placeholder">
-                <div className="bg-neutral text-neutral-content rounded-full w-10">
-                  <span className="text-sm font-medium">DJ</span>
+              <div className="avatar">
+                <div className="w-10 rounded-full border border-base-300">
+                  <img src="/profile.jpeg" alt="Divyansh Joshi" />
                 </div>
               </div>
               <div className="flex-1 min-w-0">
