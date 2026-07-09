@@ -65,13 +65,13 @@ export default function VirtualizedTable({
       <div style={{ height: `${Math.max(totalHeight, 1)}px`, width: '100%', position: 'relative' }}>
         {/* Sticky Headers (simulated via absolute positioning above virtual rows) */}
         <div 
-          className="sticky top-0 left-0 right-0 z-30 flex bg-[#0d1423] border-b border-[rgba(255,255,255,0.06)]"
+          className="sticky top-0 left-0 right-0 z-30 flex bg-base-300 border-b border-base-300/50"
           style={{ height: `${rowHeight}px` }}
         >
           {columns.map((col) => (
             <div
               key={col.key}
-              className="flex items-center px-4 font-semibold text-slate-400 text-xs uppercase tracking-wider"
+              className="flex items-center px-4 font-semibold text-base-content/70 text-xs uppercase tracking-wider"
               style={{ width: col.width || '150px', flexShrink: 0 }}
             >
               {col.header}
@@ -90,7 +90,7 @@ export default function VirtualizedTable({
           }}
         >
           {visibleData.length === 0 ? (
-            <div className="flex items-center justify-center text-slate-500 text-sm py-12">
+            <div className="flex items-center justify-center text-base-content/50 text-sm py-12">
               No records available.
             </div>
           ) : (
@@ -100,7 +100,7 @@ export default function VirtualizedTable({
               return (
                 <div
                   key={row.id || actualIndex}
-                  className={`flex border-b border-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.02)] transition-colors`}
+                  className={`flex border-b border-base-200/50 hover:bg-base-200/30 transition-colors`}
                   style={{ height: `${rowHeight}px` }}
                 >
                   {columns.map((col) => {
@@ -108,7 +108,7 @@ export default function VirtualizedTable({
                     return (
                       <div
                         key={col.key}
-                        className="flex items-center px-4 text-sm truncate text-slate-200"
+                        className="flex items-center px-4 text-sm truncate text-base-content/90"
                         style={{ width: col.width || '150px', flexShrink: 0 }}
                       >
                         {col.render ? col.render(val, row) : val !== undefined && val !== null ? String(val) : '—'}

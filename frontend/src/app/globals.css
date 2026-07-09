@@ -1,4 +1,9 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark, corporate, business;
 }
