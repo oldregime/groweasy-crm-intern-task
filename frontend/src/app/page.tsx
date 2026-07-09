@@ -81,8 +81,8 @@ export default function AppDashboard() {
   const [importResultSessionId, setImportResultSessionId] = useState('');
   const [importedLeadsResult, setImportedLeadsResult] = useState<Lead[]>([]);
 
-  // Backend API URL (Proxied via Next.js rewrites to bypass CORS and Localtunnel walls)
-  const API_BASE = '/backend-api';
+  // Backend API URL (Direct connection to Cloudflare tunnel to stream SSE properly)
+  const API_BASE = 'https://transparency-world-festival-fragrance.trycloudflare.com/api';
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
