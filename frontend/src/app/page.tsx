@@ -284,7 +284,16 @@ export default function AppDashboard() {
   const handleDownloadTemplate = () => {
     const csvContent = 
       "Lead Date,Lead Name,Contact Email,Mobile Number,Company,City,State,Country,Source,Lead Status,Notes,Description\n" +
-      "2026-07-09 10:00:00,John Doe,john.doe@example.com,+91 9876543210,GrowEasy,Mumbai,Maharashtra,India,leads_on_demand,GOOD_LEAD_FOLLOW_UP,Client is asking to reschedule demo,Interested in tech\n";
+      "2026-07-09 10:00:00,John Doe,john.doe@example.com,+91 9876543210,GrowEasy,Mumbai,Maharashtra,India,leads_on_demand,GOOD_LEAD_FOLLOW_UP,Client is asking to reschedule demo,Interested in CRM\n" +
+      "2026-07-08 14:30:00,Emily Smith,emily.smith@techcorp.com,+1 415-555-0198,TechCorp,San Francisco,CA,USA,meridian_tower,SALE_DONE,Contract signed today,Enterprise tier upgrade\n" +
+      "2026-07-07 09:15:00,Raj Patel,raj.patel@startup.in,9811223344,Startup Inc,Bangalore,Karnataka,India,eden_park,DID_NOT_CONNECT,Left voicemail,Needs real estate software\n" +
+      "2026-07-06 16:45:00,Sarah Connor,sarah@skynet.com,555-010-9999,Cyberdyne,Los Angeles,CA,USA,leads_on_demand,BAD_LEAD,Not interested in our services,Remove from list\n" +
+      "2026-07-05 11:20:00,Michael Chang,mike.c@agency.co.uk,+44 7911 123456,Creative Agency,London,ENG,UK,varah_swamy,GOOD_LEAD_FOLLOW_UP,Sent pricing PDF,Follow up next Tuesday\n" +
+      "2026-07-04 13:00:00,Anita Desai,adesai@buildco.com,+91 9000000001,BuildCo,Pune,Maharashtra,India,sarjapur_plots,GOOD_LEAD_FOLLOW_UP,Wants a product demo,Looking for integration\n" +
+      "2026-07-03 15:55:00,David Kim,dkim@logistics.net,+82 10-1234-5678,Logistics Net,Seoul,Seoul,South Korea,meridian_tower,DID_NOT_CONNECT,Email bounced,Check if phone works\n" +
+      "2026-07-02 08:30:00,Laura Martinez,l.martinez@retail.es,+34 600 11 22 33,Retail SL,Madrid,Madrid,Spain,eden_park,SALE_DONE,Payment received,Onboarding tomorrow\n" +
+      "2026-07-01 17:10:00,Omar Hassan,omar.hassan@finance.ae,+971 50 123 4567,Finance Group,Dubai,Dubai,UAE,leads_on_demand,GOOD_LEAD_FOLLOW_UP,Needs approval from boss,High value prospect\n" +
+      "2026-06-30 10:45:00,Chloe Dubois,chloe.d@design.fr,+33 6 12 34 56 78,Design FR,Paris,IDF,France,varah_swamy,BAD_LEAD,Budget too small,Disqualified\n";
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
