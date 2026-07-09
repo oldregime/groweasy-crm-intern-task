@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/backend-api/:path*',
-        destination: 'https://proud-cheetah-3.loca.lt/api/:path*' // using the latest localtunnel URL
+        destination: 'https://chilly-goat-19.loca.lt/api/:path*' // using the latest localtunnel URL
       }
     ]
   }
