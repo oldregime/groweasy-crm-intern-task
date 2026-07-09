@@ -119,7 +119,21 @@ router.get('/sessions', async (req, res) => {
   }
 });
 
-// DELETE /api/leads - Reset the database (Delete all records)
+// DELETE /api/leads/:id - Delete a specific lead
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.lead.delete({
+      where: { id },
+    });
+    res.json({ message: 'Lead deleted successfully.' });
+  } catch (error: any) {
+    console.error('Error deleting lead:', error);
+    res.status(500).json({ error: `Failed to delete lead: ${error.message}` });
+  }
+});
+
+// DELETE /api/leads/reset - Reset the database (Delete all records)
 router.delete('/reset', async (req, res) => {
   try {
     const deleted = await prisma.lead.deleteMany();

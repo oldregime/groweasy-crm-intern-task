@@ -6,7 +6,7 @@ import {
   Database, Phone, Settings, Search, RefreshCw, Upload, 
   Trash2, ChevronRight, TrendingUp, Key, Sun, Moon,
   FileSpreadsheet, AlertTriangle, CheckCircle2, Loader2,
-  Menu, X, Bell, MoreVertical, FileText
+  Menu, X, Bell, MoreVertical, FileText, Download
 } from 'lucide-react';
 import Papa from 'papaparse';
 import VirtualizedTable from '../components/VirtualizedTable';
@@ -158,6 +158,20 @@ export default function AppDashboard() {
         }
       } catch (err) {
         console.error('Reset database failed:', err);
+      }
+    }
+  };
+
+  const handleDeleteLead = async (id: string) => {
+    if (confirm('Are you sure you want to delete this lead?')) {
+      try {
+        const res = await fetch(`${API_BASE}/leads/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          fetchLeads(true);
+          fetchDashboardData();
+        }
+      } catch (err) {
+        console.error('Failed to delete lead', err);
       }
     }
   };
@@ -317,7 +331,7 @@ export default function AppDashboard() {
             <div className="dropdown dropdown-end">
               <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
                 <div className="bg-primary text-primary-content rounded-full w-10">
-                  <span className="font-semibold text-sm">VK</span>
+                  <span className="font-semibold text-sm">DJ</span>
                 </div>
               </div>
               <ul tabIndex={0} className="mt-3 z-50 p-2 shadow-2xl menu menu-sm dropdown-content bg-base-100 rounded-box w-52 border border-base-300">
@@ -498,9 +512,39 @@ export default function AppDashboard() {
                     <RefreshCw size={18} className={loadingLeads ? 'animate-spin' : ''} />
                   </button>
 
-                  <button className="btn btn-outline btn-error gap-2" onClick={handleResetDatabase} title="Wipe Database">
+                  <div className="flex gap-2">
+                  <button 
+                    className="btn btn-outline btn-info gap-2"
+                    onClick={() => {
+                      if (leads.length === 0) return alert('No leads to export.');
+                      const headers = ['Name', 'Email', 'Phone', 'Company', 'Status', 'Source', 'Notes'];
+                      const csvContent = [
+                        headers.join(','),
+                        ...leads.map(l => [
+                          `"${l.name || ''}"`,
+                          `"${l.email || ''}"`,
+                          `"${l.mobile_without_country_code || ''}"`,
+                          `"${l.company || ''}"`,
+                          `"${l.crm_status || ''}"`,
+                          `"${l.data_source || ''}"`,
+                          `"${l.crm_note || ''}"`
+                        ].join(','))
+                      ].join('\n');
+                      const blob = new Blob([csvContent], { type: 'text/csv' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `leads_export_${new Date().toISOString().split('T')[0]}.csv`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                  >
+                    <Download size={16} /> Export CSV
+                  </button>
+                  <button className="btn btn-outline btn-error gap-2" onClick={handleResetDatabase}>
                     <Trash2 size={16} /> Reset DB
                   </button>
+                </div>
                 </div>
               </div>
 
@@ -531,7 +575,12 @@ export default function AppDashboard() {
                         }
                       },
                       { key: 'data_source', header: 'Source', width: '160px', render: (val) => <span className="badge badge-neutral font-mono text-[10px]">{val || '—'}</span> },
-                      { key: 'crm_note', header: 'Notes', width: '300px', render: (val) => <span className="text-sm truncate block max-w-[280px]" title={val}>{val || '—'}</span> }
+                      { key: 'crm_note', header: 'Notes', width: '300px', render: (val) => <span className="text-sm truncate block max-w-[280px]" title={val}>{val || '—'}</span> },
+                      { key: 'actions', header: 'Actions', width: '100px', render: (_, row) => (
+                        <button onClick={() => handleDeleteLead(row.id)} className="btn btn-ghost btn-xs text-error" title="Delete Lead">
+                          <Trash2 size={14} />
+                        </button>
+                      )}
                     ]}
                   />
                 </div>
@@ -582,11 +631,11 @@ export default function AppDashboard() {
             <div className="flex items-center gap-3">
               <div className="avatar placeholder">
                 <div className="bg-neutral text-neutral-content rounded-full w-10">
-                  <span className="text-sm font-medium">VK</span>
+                  <span className="text-sm font-medium">DJ</span>
                 </div>
               </div>
-              <div>
-                <h4 className="text-sm font-bold">Varun Kumar</h4>
+              <div className="flex-1 min-w-0">
+                <h4 className="text-sm font-bold">Divyansh Joshi</h4>
                 <p className="text-xs text-base-content/60">Admin User</p>
               </div>
             </div>
